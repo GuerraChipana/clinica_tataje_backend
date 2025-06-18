@@ -47,9 +47,7 @@ export class ServicioReniecService {
         apellido_materno: persona.second_last_name.trim(),
         fecha_nacimiento: persona.date_of_birth.substring(0, 10),
         genero: persona.gender === 'Masculino' ? 'Masculino' : 'Femenino',
-        departamento: persona.department.trim(),
-        provincia: persona.province.trim(),
-        distrito: persona.district.trim(),
+        ubigeo: `${persona.department.trim()} - ${persona.province.trim()} - ${persona.district.trim()}`,
       };
     } catch (error) {
       throw new InternalServerErrorException(

@@ -1,18 +1,20 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
-
   CreateDateColumn,
-  
+  Entity,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Rol } from '../enums/roles.enum';
+export enum estadoCivil {
+  D = 'D',
+  C = 'C',
+  V = 'V',
+  S = 'S',
+}
 
-
-@Entity('personal_clinico')
-export class PersonalClinico {
+@Entity('pacientes')
+export class Paciente {
   @PrimaryGeneratedColumn()
-  id_personal: number;
+  id_paciente: number;
 
   @Column({ length: 8, unique: true })
   dni: string;
@@ -29,19 +31,22 @@ export class PersonalClinico {
   @Column({ type: 'date', nullable: true })
   fecha_nacimiento: Date;
 
-  @Column()
-  ubigeo: string;
-
   @Column({ type: 'enum', enum: ['Masculino', 'Femenino'] })
   genero: 'Masculino' | 'Femenino';
 
-  @Column({ length: 100, unique: true })
-  email: string;
+  @Column({ length: 50 })
+  ubigeo: string;
 
-  @Column({ name: 'roles', type: 'enum', enum: Rol })
-  rol: Rol;
+  @Column({ type: 'enum', enum: estadoCivil })
+  estado_civil: estadoCivil;
 
-  @Column({ length: 255 })
+  @Column({ type: 'varchar', length: 4 })
+  grupo_sanguineo: string;
+
+  @Column()
+  telefono: string;
+
+  @Column()
   password: string;
 
   @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { ServicioReniecService } from './servicio-reniec.service';
 import { CreateServicioReniecDto } from './dto/create-servicio-reniec.dto';
 
@@ -9,6 +9,10 @@ export class ServicioReniecController {
   @Post()
   @HttpCode(HttpStatus.OK)
   async consultarPorDni(@Body() dto: CreateServicioReniecDto) {
-    return await this.servicioReniecService.consultarPorDni(dto);
+    try {
+      return await this.servicioReniecService.consultarPorDni(dto);
+    } catch (error) {
+      throw new InternalServerErrorException(`${error.message}`);
+    }
   }
 }

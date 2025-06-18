@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PersonalClinico } from './entities/personal_clinico.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { RolesEnum } from './enums/roles.enum';
 import { CambiarCredencialesDto } from './dto/cambiar-credenciales.dto';
 
 @Injectable()
@@ -53,17 +52,14 @@ export class PersonalClinicoService {
     }
     // Verificación de rol del creador
     if (
-      rol === RolesEnum.ADMINISTRADOR &&
-      (createPersonalClinicoDto.rol === RolesEnum.SUPERADMINISTRADOR ||
-        createPersonalClinicoDto.rol === RolesEnum.ADMINISTRADOR)
+      rol === 'superadministrador' &&
+      (createPersonalClinicoDto.rol === 'superadministrador' ||
+        createPersonalClinicoDto.rol === 'administrador')
     ) {
       throw new BadRequestException(
         'Un administrador no puede crear a un superadministrador ni a otro administrador',
       );
-    } else if (
-      rol !== RolesEnum.SUPERADMINISTRADOR &&
-      rol !== RolesEnum.ADMINISTRADOR
-    ) {
+    } else if (rol !== 'superadministrador' && rol !== 'administrador') {
       throw new BadRequestException(
         'No tienes permisos para crear personal clínico',
       );
@@ -82,9 +78,7 @@ export class PersonalClinicoService {
     });
 
     // Guardar en la base de datos
-    await this.personalClinicoRepository.save(newPersonalClinico);
-
-    return newPersonalClinico;
+    return await this.personalClinicoRepository.save(newPersonalClinico);
   }
 
   // Método para cambiar las credenciales
@@ -113,15 +107,20 @@ export class PersonalClinicoService {
       throw new BadRequestException('La contraseña actual no es válida');
     }
 
-    if (cambiarCredencialesDto.emailNuevo) {
+    if (
+      cambiarCredencialesDto.emailNuevo &&
+      cambiarCredencialesDto.emailNuevo !== personalClinico.email
+    ) {
       const existingEmail = await this.personalClinicoRepository.findOne({
         where: { email: cambiarCredencialesDto.emailNuevo },
       });
+
       if (existingEmail) {
         throw new BadRequestException(
           'El correo electrónico nuevo ya está registrado',
         );
       }
+
       personalClinico.email = cambiarCredencialesDto.emailNuevo;
     }
 
@@ -135,20 +134,47 @@ export class PersonalClinicoService {
     }
 
     await this.personalClinicoRepository.save(personalClinico);
-    return personalClinico;
+    const personal = await this.personalClinicoRepository.findOne({
+      where: { id_personal: personalClinico.id_personal },
+      select: { id_personal: true, email: true, password: true },
+    });
+
+    return personal;
   }
 
   async findAll(rol: string): Promise<PersonalClinico[]> {
-    const personalClinico = await this.personalClinicoRepository.find();
+    const personalClinico = await this.personalClinicoRepository.find({
+      select: [
+        'id_personal',
+        'dni',
+        'nombres',
+        'apellido_paterno',
+        'apellido_materno',
+        'fecha_nacimiento',
+        'ubigeo',
+        'email',
+        'rol',
+        'genero',
+      ],
+    });
 
-    // Filtro segun el rol del usuario
-    return rol === RolesEnum.ADMINISTRADOR
-      ? personalClinico.filter(
-          (usuaio) =>
-            usuaio.rol !== RolesEnum.SUPERADMINISTRADOR &&
-            usuaio.rol !== RolesEnum.ADMINISTRADOR,
-        )
-      : personalClinico; // Muestra todo para superadmin
+    if (rol === 'superadministrador') {
+      return personalClinico;
+    }
+
+    if (rol === 'administrador') {
+      return personalClinico.filter(
+        (personal) =>
+          personal.rol !== 'superadministrador' &&
+          personal.rol !== 'administrador',
+      );
+    }
+
+    if (rol !== 'administrador' && rol !== 'superadministrador') {
+      return [];
+    }
+
+    return personalClinico;
   }
 
   async findOne(id_personal: number): Promise<PersonalClinico> {
