@@ -1,16 +1,16 @@
 import {
-  IsEmail,
+  IsDate,
   IsEnum,
   IsNotEmpty,
-  Length,
-  IsString,
   IsOptional,
-  IsDate,
-  IsInt,
+  IsPhoneNumber,
+  IsString,
+  Length,
+  Matches,
 } from 'class-validator';
-import { Rol } from '../enums/roles.enum';
+import { estadoCivil } from '../entities/paciente.entity';
 
-export class CreatePersonalClinicoDto {
+export class CreatePacienteDto {
   @IsNotEmpty()
   @Length(8, 8)
   dni: string;
@@ -36,16 +36,21 @@ export class CreatePersonalClinicoDto {
   genero: 'Masculino' | 'Femenino';
 
   @IsOptional()
+  @IsString()
   ubigeo: string;
 
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
+  @IsString()
+  estado_civil: estadoCivil;
 
-  @IsNotEmpty()
+  @IsPhoneNumber('PE')
+  telefono: string;
+
+  @Matches(/^(A|B|AB|O)[+-]$/, {
+    message:
+      'El grupo sanguíneo debe ser un formato válido (Ejemplo: O+, A-, B+, AB-).',
+  })
+  grupo_sanguineo: string;
+
   @IsString()
   password: string;
-
-  @IsEnum(Rol, { message: 'Rol no válido' })
-  rol: Rol;
 }

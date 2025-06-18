@@ -9,13 +9,16 @@ import {
   Request,
   BadRequestException,
   InternalServerErrorException,
+  UseGuards,
 } from '@nestjs/common';
 import { PersonalClinicoService } from './personal_clinico.service';
 import { CreatePersonalClinicoDto } from './dto/create-personal_clinico.dto';
 import { UpdatePersonalClinicoDto } from './dto/update-personal_clinico.dto';
 import { UserRequestReq } from './user-request.Req';
 import { CambiarCredencialesDto } from './dto/cambiar-credenciales.dto';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('personalClinico')
 export class PersonalClinicoController {
   constructor(
@@ -75,8 +78,5 @@ export class PersonalClinicoController {
     }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.personalClinicoService.remove(+id);
-  }
+ 
 }

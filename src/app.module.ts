@@ -5,10 +5,13 @@ import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { ServicioReniecModule } from './modules/servicio-reniec/servicio-reniec.module';
 import { PersonalClinicoModule } from './modules/personal_clinico/personal_clinico.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { PacientesModule } from './modules/pacientes/pacientes.module';
+import { InformacionMedicaModule } from './modules/informacion_medica/informacion_medica.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({isGlobal:true}),
     TypeOrmModule.forRootAsync({
       useFactory: async () => ({
         type: 'mysql',
@@ -21,9 +24,11 @@ import { PersonalClinicoModule } from './modules/personal_clinico/personal_clini
         synchronize: false,
       }),
     }),
-
     ServicioReniecModule,
     PersonalClinicoModule,
+    AuthModule,
+    PacientesModule,
+    InformacionMedicaModule,
   ],
   controllers: [AppController],
   providers: [],
