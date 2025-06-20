@@ -8,6 +8,8 @@ import { PersonalClinicoModule } from './modules/personal_clinico/personal_clini
 import { AuthModule } from './modules/auth/auth.module';
 import { PacientesModule } from './modules/pacientes/pacientes.module';
 import { InformacionMedicaModule } from './modules/informacion_medica/informacion_medica.module';
+import { MedicosModule } from './modules/medicos/medicos.module';
+import { EspecialidadesModule } from './modules/especialidades/especialidades.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { InformacionMedicaModule } from './modules/informacion_medica/informacio
     AuthModule,
     PacientesModule,
     InformacionMedicaModule,
+    MedicosModule,
+    EspecialidadesModule,
   ],
   controllers: [AppController],
   providers: [],
