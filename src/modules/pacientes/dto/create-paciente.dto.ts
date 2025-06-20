@@ -39,17 +39,21 @@ export class CreatePacienteDto {
   @IsString()
   ubigeo: string;
 
+  @IsOptional()
+  @IsString()
+  direccion: string;
+
   @IsString()
   estado_civil: estadoCivil;
 
   @IsPhoneNumber('PE')
   telefono: string;
 
-  @Matches(/^(A|B|AB|O)[+-]$/, {
-    message:
-      'El grupo sanguíneo debe ser un formato válido (Ejemplo: O+, A-, B+, AB-).',
-  })
-  grupo_sanguineo: string;
+  // @Matches(/^(A|B|AB|O)[+-]$/, {
+  //   message:
+  //     'El grupo sanguíneo debe ser un formato válido (Ejemplo: O+, A-, B+, AB-).',
+  // })
+  // grupo_sanguineo: string;
 
   @IsString()
   password: string;

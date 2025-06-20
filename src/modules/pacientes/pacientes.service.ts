@@ -42,6 +42,7 @@ export class PacientesService {
         apellido_materno: true,
         fecha_nacimiento: true,
         ubigeo: true,
+        direccion: true,
         telefono: true,
         genero: true,
       },
@@ -51,6 +52,18 @@ export class PacientesService {
   async findOne(id_paciente: number): Promise<Paciente> {
     const paciente = await this.pacienteRepo.findOne({
       where: { id_paciente },
+      select: {
+        id_paciente: true,
+        dni: true,
+        nombres: true,
+        apellido_paterno: true,
+        apellido_materno: true,
+        fecha_nacimiento: true,
+        ubigeo: true,
+        direccion: true,
+        telefono: true,
+        genero: true,
+      },
     });
     if (!paciente) {
       throw new BadRequestException('Paciente no existente');
@@ -78,7 +91,7 @@ export class PacientesService {
     return updatedPaciente;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} paciente`;
+  async remove(id: number) {
+    return `NO hay servicio aun`;
   }
 }

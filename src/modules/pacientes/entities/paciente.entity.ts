@@ -5,10 +5,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 export enum estadoCivil {
-  D = 'D',
-  C = 'C',
-  V = 'V',
-  S = 'S',
+  DIVORCIADO = 'DIVORCIADO',
+  CASADO = 'CASADO',
+  VIUDO = 'VIUDO',
+  SOLTERO = 'SOLTERO',
 }
 
 @Entity('pacientes')
@@ -37,11 +37,11 @@ export class Paciente {
   @Column({ length: 50 })
   ubigeo: string;
 
+  @Column()
+  direccion: string;
+
   @Column({ type: 'enum', enum: estadoCivil })
   estado_civil: estadoCivil;
-
-  @Column({ type: 'varchar', length: 4 })
-  grupo_sanguineo: string;
 
   @Column()
   telefono: string;

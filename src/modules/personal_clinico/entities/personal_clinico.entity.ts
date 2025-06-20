@@ -2,12 +2,11 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-
   CreateDateColumn,
-  
+  OneToMany,
 } from 'typeorm';
 import { Rol } from '../enums/roles.enum';
-
+import { Medico } from 'src/modules/medicos/entities/medico.entity';
 
 @Entity('personal_clinico')
 export class PersonalClinico {
@@ -46,4 +45,7 @@ export class PersonalClinico {
 
   @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   fecha_registro: Date;
+  
+  @OneToMany(() => Medico, (medico) => medico.personalClinico)
+  medico: Medico[];
 }
