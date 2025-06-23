@@ -12,6 +12,6 @@ export class Especialidades {
 
   @Column({ type: 'longtext' }) imagen: string;
 
-  @OneToMany(() => Medico, (medico) => medico.especialidad)
+  @OneToMany(() => Medico, (medico) => medico.id_especialidad)
   medicos: Medico[];
 }

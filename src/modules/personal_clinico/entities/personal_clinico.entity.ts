@@ -46,6 +46,6 @@ export class PersonalClinico {
   @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   fecha_registro: Date;
   
-  @OneToMany(() => Medico, (medico) => medico.personalClinico)
+  @OneToMany(() => Medico, (medico) => medico.id_personal)
   medico: Medico[];
 }

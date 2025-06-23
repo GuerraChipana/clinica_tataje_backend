@@ -5,33 +5,34 @@ import {
   Body,
   Patch,
   Param,
-
   Request,
-  
   InternalServerErrorException,
   UseGuards,
 } from '@nestjs/common';
 import { PersonalClinicoService } from './personal_clinico.service';
 import { CreatePersonalClinicoDto } from './dto/create-personal_clinico.dto';
 import { UpdatePersonalClinicoDto } from './dto/update-personal_clinico.dto';
-import { UserRequestReq } from './user-request.Req';
+import { PersonalUserReq } from './user-request.Req';
 import { CambiarCredencialesDto } from './dto/cambiar-credenciales.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { RoleGuard } from '../auth/role.guard';
+import { Roles } from '../auth/role.decorator';
+import { Rol } from './enums/roles.enum';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RoleGuard)
 @Controller('personalClinico')
 export class PersonalClinicoController {
   constructor(
     private readonly personalClinicoService: PersonalClinicoService,
   ) {}
 
+  @Roles(Rol.ADMINISTRADOR, Rol.SUPERADMINISTRADOR)
   @Post()
   async create(
     @Body() createPersonalClinicoDto: CreatePersonalClinicoDto,
-    @Request() req: UserRequestReq,
+    @Request() req: PersonalUserReq,
   ) {
-    const rol = req.user.rol; // Obtener el rol del usuario autenticado
-
+    const rol = req.user.rol;
     try {
       return this.personalClinicoService.crearPersonalClinico(
         createPersonalClinicoDto,
@@ -43,8 +44,9 @@ export class PersonalClinicoController {
   }
 
   @Patch('credenciales')
+  @Roles(Rol.ADMINISTRADOR, Rol.SUPERADMINISTRADOR, Rol.MEDICO, Rol.SECRETARIA)
   async credencial(
-    @Request() req: UserRequestReq,
+    @Request() req: PersonalUserReq,
     @Body() cambiarCredencialesDto: CambiarCredencialesDto,
   ) {
     const id_personal = req.user.id_personal;
@@ -59,7 +61,8 @@ export class PersonalClinicoController {
   }
 
   @Get()
-  async findAll(@Request() req: UserRequestReq) {
+  @Roles(Rol.ADMINISTRADOR, Rol.SUPERADMINISTRADOR)
+  async findAll(@Request() req: PersonalUserReq) {
     const rol = req.user.rol;
 
     try {
@@ -70,6 +73,7 @@ export class PersonalClinicoController {
   }
 
   @Get(':id')
+  @Roles(Rol.ADMINISTRADOR, Rol.SUPERADMINISTRADOR)
   async findOne(@Param('id') id_personal: number) {
     try {
       return this.personalClinicoService.findOne(id_personal);
@@ -77,6 +81,4 @@ export class PersonalClinicoController {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
-
- 
 }

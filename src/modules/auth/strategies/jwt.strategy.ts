@@ -14,6 +14,17 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: any) {
+    // Detectar según el rol
+    if (payload.rol === 'paciente') {
+      return {
+        id_paciente: payload.sub,
+        dni: payload.dni,
+        name: payload.name,
+        rol: payload.rol,
+      };
+    }
+
+    // Personal clínico o administrador
     return {
       id_personal: payload.sub,
       nombres: payload.name,

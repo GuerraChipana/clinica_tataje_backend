@@ -16,7 +16,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/role.guard';
 import { Roles } from '../auth/role.decorator';
 import { Rol } from '../personal_clinico/enums/roles.enum';
-import { UserRequestReq } from '../personal_clinico/user-request.Req';
+import { PacienteUserReq } from '../personal_clinico/user-request.Req';
 
 @Controller('pacientes')
 export class PacientesController {
@@ -30,10 +30,10 @@ export class PacientesController {
       throw new Error(error.message);
     }
   }
-
-  @Get()
-  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  
   @Roles(Rol.ADMINISTRADOR, Rol.SUPERADMINISTRADOR, Rol.SECRETARIA)
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Get()
   findAll() {
     try {
       return this.pacientesService.findAll();
@@ -53,14 +53,14 @@ export class PacientesController {
     }
   }
 
-  // 🔒 Solo para PACIENTES autenticados
+  // Solo para PACIENTES autenticados
   @Patch('cell-estado')
   @UseGuards(AuthGuard('jwt'))
   camnioCellECivil(
-    @Request() req: UserRequestReq,
+    @Request() req: PacienteUserReq,
     @Body() updatePacienteDto: UpdatePacienteDto,
   ) {
-    const id = req.user.id_personal;
+    const id = req.user.id_paciente;
     try {
       return this.pacientesService.cambioCelladnECivil(id, updatePacienteDto);
     } catch (error) {
