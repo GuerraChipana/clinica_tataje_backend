@@ -33,7 +33,7 @@ export class MedicosService {
     if (personal.rol !== Rol.MEDICO)
       throw new BadRequestException('El personal no tiene el rol de médico');
     const existeMedico = await this.medicoRepository.findOne({
-      where: { personalClinico: { id_personal: id } },
+      where: { id_medico: id },
     });
     if (existeMedico)
       throw new BadRequestException(
@@ -57,16 +57,16 @@ export class MedicosService {
     const especialidad = await this.validarEspecialidad(id_especialidad);
 
     const medico = this.medicoRepository.create({
-      personalClinico: personal,
-      especialidad: especialidad,
+      id_personal: personal,
+      id_especialidad: especialidad,
     });
 
     const savedMedico = await this.medicoRepository.save(medico);
 
     // Formatear respuesta manualmente
     return {
-      id_medico: savedMedico.id_medico,
-      especialidad: {
+      id_medico: savedMedico,
+      id_especialidad: {
         id_especialidad: especialidad.id_especialidad,
         nombre: especialidad.nombre,
       },
@@ -97,7 +97,7 @@ export class MedicosService {
 
     if (id_especialidad) {
       const nuevaEspecialidad = await this.validarEspecialidad(id_especialidad);
-      medico.especialidad = nuevaEspecialidad;
+      medico.id_especialidad = nuevaEspecialidad;
     }
 
     const updatedMedico = await this.medicoRepository.save(medico);
@@ -105,15 +105,15 @@ export class MedicosService {
     return {
       id_medico: updatedMedico.id_medico,
       especialidad: {
-        id_especialidad: medico.especialidad.id_especialidad,
-        nombre: medico.especialidad.nombre,
+        id_especialidad: medico.id_especialidad.id_especialidad,
+        nombre: medico.id_especialidad.nombre,
       },
       personalClinico: {
-        id_personal: medico.personalClinico.id_personal,
-        nombres: medico.personalClinico.nombres,
-        apellido_paterno: medico.personalClinico.apellido_paterno,
-        apellido_materno: medico.personalClinico.apellido_materno,
-        email: medico.personalClinico.email,
+        id_personal: medico.id_personal.id_personal,
+        nombres: medico.id_personal.nombres,
+        apellido_paterno: medico.id_personal.apellido_paterno,
+        apellido_materno: medico.id_personal.apellido_materno,
+        email: medico.id_personal.email,
       },
     };
   }
@@ -126,15 +126,15 @@ export class MedicosService {
     return medicos.map((medico) => ({
       id_medico: medico.id_medico,
       especialidad: {
-        id_especialidad: medico.especialidad.id_especialidad,
-        nombre: medico.especialidad.nombre,
+        id_especialidad: medico.id_especialidad.id_especialidad,
+        nombre: medico.id_especialidad.nombre,
       },
       peronsal_clinico: {
-        id_personal: medico.personalClinico.id_personal,
-        nombres: medico.personalClinico.nombres,
-        apellido_paterno: medico.personalClinico.apellido_paterno,
-        apellido_materno: medico.personalClinico.apellido_materno,
-        email: medico.personalClinico.email,
+        id_personal: medico.id_personal.id_personal,
+        nombres: medico.id_personal.nombres,
+        apellido_paterno: medico.id_personal.apellido_paterno,
+        apellido_materno: medico.id_personal.apellido_materno,
+        email: medico.id_personal.email,
       },
     }));
   }
@@ -150,15 +150,15 @@ export class MedicosService {
     return {
       id_medico: medico.id_medico,
       especialidad: {
-        id_especialidad: medico.especialidad.id_especialidad,
-        nombre: medico.especialidad.nombre,
+        id_especialidad: medico.id_especialidad.id_especialidad,
+        nombre: medico.id_especialidad.nombre,
       },
       personalClinico: {
-        id_personal: medico.personalClinico.id_personal,
-        nombres: medico.personalClinico.nombres,
-        apellido_paterno: medico.personalClinico.apellido_paterno,
-        apellido_materno: medico.personalClinico.apellido_materno,
-        email: medico.personalClinico.email,
+        id_personal: medico.id_personal.id_personal,
+        nombres: medico.id_personal.nombres,
+        apellido_paterno: medico.id_personal.apellido_paterno,
+        apellido_materno: medico.id_personal.apellido_materno,
+        email: medico.id_personal.email,
       },
     };
   }

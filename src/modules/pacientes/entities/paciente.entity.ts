@@ -1,7 +1,9 @@
+import { Cita } from 'src/modules/citas/entities/cita.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 export enum estadoCivil {
@@ -51,4 +53,7 @@ export class Paciente {
 
   @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   fecha_registro: Date;
+
+  @OneToMany(() => Cita, (cita) => cita.id_paciente)
+  citas: Cita[];
 }

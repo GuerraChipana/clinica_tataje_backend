@@ -10,6 +10,7 @@ import { PacientesModule } from './modules/pacientes/pacientes.module';
 import { InformacionMedicaModule } from './modules/informacion_medica/informacion_medica.module';
 import { MedicosModule } from './modules/medicos/medicos.module';
 import { EspecialidadesModule } from './modules/especialidades/especialidades.module';
+import { CitasModule } from './modules/citas/citas.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { EspecialidadesModule } from './modules/especialidades/especialidades.mo
     InformacionMedicaModule,
     MedicosModule,
     EspecialidadesModule,
+    CitasModule,
   ],
   controllers: [AppController],
   providers: [],
