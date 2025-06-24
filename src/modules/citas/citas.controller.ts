@@ -118,10 +118,10 @@ export class CitasController {
   // Obtener todas las citas canceladas
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Roles(Rol.ADMINISTRADOR, Rol.SUPERADMINISTRADOR, Rol.MEDICO, Rol.SECRETARIA)
-  @Get('canceladas')
+  @Get('personal/canceladas')
   findAllCitasCanceladas() {
     try {
-      return this.citasService.finfAllCitasCanceladas();
+      return this.citasService.findCitasCanceladas();
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);
     }

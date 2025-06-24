@@ -111,7 +111,7 @@ export class CitasService {
       })
       .getCount();
 
-    if (citasProgramadas >= 3) {
+    if (citasProgramadas > 3) {
       throw new BadRequestException(
         'El paciente no puede tener más de 3 citas programadas activas',
       );
@@ -304,10 +304,15 @@ export class CitasService {
     return this.mapToCitaResponse(citaActualizada);
   }
 
-  async finfAllCitasCanceladas(): Promise<CitaResponseDto[]> {
-    const citas = await this.citaRepo.find({
-      where: { estado: EstadoCitaEnum.CANCELADA },
-    });
+  async findCitasCanceladas(): Promise<CitaResponseDto[]> {
+    const citas = await this.citaRepo
+      .createQueryBuilder('cita')
+      .leftJoinAndSelect('cita.id_paciente', 'paciente')
+      .leftJoinAndSelect('cita.id_medico', 'medico')
+      .leftJoinAndSelect('medico.id_personal', 'personal')
+      .leftJoinAndSelect('medico.id_especialidad', 'especialidad')
+      .where('cita.estado = :estado', { estado: EstadoCitaEnum.CANCELADA })
+      .getMany();
 
     return citas.map((cita) => this.mapToCitaResponse(cita));
   }
