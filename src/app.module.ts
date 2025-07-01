@@ -11,6 +11,8 @@ import { InformacionMedicaModule } from './modules/informacion_medica/informacio
 import { MedicosModule } from './modules/medicos/medicos.module';
 import { EspecialidadesModule } from './modules/especialidades/especialidades.module';
 import { CitasModule } from './modules/citas/citas.module';
+import { ConsultasMedicasModule } from './modules/consultas_medicas/consultas_medicas.module';
+import { HistoriaMedicaModule } from './modules/historia_medica/historia_medica.module';
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { CitasModule } from './modules/citas/citas.module';
     MedicosModule,
     EspecialidadesModule,
     CitasModule,
+    ConsultasMedicasModule,
+    HistoriaMedicaModule,
   ],
   controllers: [AppController],
   providers: [],
