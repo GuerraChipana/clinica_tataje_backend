@@ -17,11 +17,21 @@ import { RoleGuard } from '../auth/role.guard';
 import { Roles } from '../auth/role.decorator';
 import { Rol } from '../personal_clinico/enums/roles.enum';
 import { PacienteUserReq } from '../personal_clinico/user-request.Req';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
+@ApiTags('Pacientes')
 @Controller('pacientes')
 export class PacientesController {
   constructor(private readonly pacientesService: PacientesService) {}
 
+  @ApiOperation({ summary: 'Crear un nuevo paciente' })
+  @ApiResponse({ status: 201, description: 'Paciente creado exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
   @Post()
   create(@Body() createPacienteDto: CreatePacienteDto) {
     try {
@@ -30,7 +40,11 @@ export class PacientesController {
       throw new Error(error.message);
     }
   }
-  
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener todos los pacientes' })
+  @ApiResponse({ status: 200, description: 'Lista de pacientes.' })
+  @ApiResponse({ status: 401, description: 'No autorizado.' })
   @Roles(Rol.ADMINISTRADOR, Rol.SUPERADMINISTRADOR, Rol.SECRETARIA)
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Get()
@@ -42,6 +56,11 @@ export class PacientesController {
     }
   }
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener un paciente por ID' })
+  @ApiResponse({ status: 200, description: 'Paciente encontrado.' })
+  @ApiResponse({ status: 404, description: 'Paciente no encontrado.' })
+  @ApiResponse({ status: 401, description: 'No autorizado.' })
   @Get(':id')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Roles(Rol.ADMINISTRADOR, Rol.SUPERADMINISTRADOR, Rol.SECRETARIA)
@@ -53,7 +72,12 @@ export class PacientesController {
     }
   }
 
-  // Solo para PACIENTES autenticados
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Actualizar celular y estado civil del paciente autenticado',
+  })
+  @ApiResponse({ status: 200, description: 'Paciente actualizado.' })
+  @ApiResponse({ status: 401, description: 'No autorizado.' })
   @Patch('cell-estado')
   @UseGuards(AuthGuard('jwt'))
   camnioCellECivil(
@@ -63,17 +87,6 @@ export class PacientesController {
     const id = req.user.id_paciente;
     try {
       return this.pacientesService.cambioCelladnECivil(id, updatePacienteDto);
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
-
-  @Delete(':id')
-  @UseGuards(AuthGuard('jwt'), RoleGuard)
-  @Roles(Rol.ADMINISTRADOR, Rol.SUPERADMINISTRADOR, Rol.SECRETARIA)
-  remove(@Param('id') id: number) {
-    try {
-      return this.pacientesService.remove(id);
     } catch (error) {
       throw new Error(error.message);
     }

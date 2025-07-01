@@ -1,10 +1,9 @@
-import { IsString, Length } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginPacienteDto {
-  @IsString()
-  @Length(8, 8)
+  @ApiProperty({ example: '12345678', description: 'DNI del paciente' })
   dni: string;
 
-  @IsString()
+  @ApiProperty({ example: '1234', description: 'Contraseña del paciente' })
   password: string;
 }

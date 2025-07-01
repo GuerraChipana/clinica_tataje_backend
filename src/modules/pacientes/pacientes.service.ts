@@ -90,8 +90,4 @@ export class PacientesService {
 
     return updatedPaciente;
   }
-
-  async remove(id: number) {
-    return `NO hay servicio aun`;
-  }
 }

@@ -7,12 +7,12 @@ import { CreateCitaDto } from './dto/create-cita.dto';
 import { UpdateCitaDto } from './dto/update-cita.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cita } from './entities/cita.entity';
-import { Equal, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Paciente } from '../pacientes/entities/paciente.entity';
 import { Medico } from '../medicos/entities/medico.entity';
 import { CitaResponseDto } from './dto/response-cita.dto';
 import { EstadoCitaEnum } from './enum/estado-cita.enum';
-import { map } from 'rxjs';
+import { BuscarCitaPacienteDto } from './dto/buscar-cita-paciente.dto';
 
 @Injectable()
 export class CitasService {
@@ -180,6 +180,21 @@ export class CitasService {
       .leftJoinAndSelect('medico.id_personal', 'personal')
       .leftJoinAndSelect('medico.id_especialidad', 'especialidad')
       .where('cita.id_paciente = :id', { id: id_pacienteClinico })
+      .getMany();
+
+    return citas.map((cita) => this.mapToCitaResponse(cita));
+  }
+
+  async buscarCitasDelPaciente(
+    dto: BuscarCitaPacienteDto,
+  ): Promise<CitaResponseDto[]> {
+    const citas = await this.citaRepo
+      .createQueryBuilder('cita')
+      .leftJoinAndSelect('cita.id_paciente', 'paciente')
+      .leftJoinAndSelect('cita.id_medico', 'medico')
+      .leftJoinAndSelect('medico.id_personal', 'personal')
+      .leftJoinAndSelect('medico.id_especialidad', 'especialidad')
+      .where('cita.id_paciente = :id', { id: dto.id_paciente })
       .getMany();
 
     return citas.map((cita) => this.mapToCitaResponse(cita));
