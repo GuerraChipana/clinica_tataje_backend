@@ -71,6 +71,28 @@ export class PacientesService {
     return paciente;
   }
 
+   async misDatos(id_paciente: number): Promise<Paciente> {
+    const paciente = await this.pacienteRepo.findOne({
+      where: { id_paciente },
+      select: {
+        id_paciente: true,
+        dni: true,
+        nombres: true,
+        apellido_paterno: true,
+        apellido_materno: true,
+        fecha_nacimiento: true,
+        ubigeo: true,
+        direccion: true,
+        telefono: true,
+        genero: true,
+      },
+    });
+    if (!paciente) {
+      throw new BadRequestException('Paciente no existente');
+    }
+    return paciente;
+  }
+
   async cambioCelladnECivil(
     id_paciente: number,
     updatePacienteDto: UpdatePacienteDto,

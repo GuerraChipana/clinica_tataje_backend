@@ -180,6 +180,15 @@ export class PersonalClinicoService {
   async findOne(id_personal: number): Promise<PersonalClinico> {
     const personalClinico = await this.personalClinicoRepository.findOne({
       where: { id_personal },
+      select: {
+        id_personal: true,
+        dni: true,
+        nombres: true,
+        apellido_paterno: true,
+        apellido_materno: true,
+        email: true,
+        rol: true,
+      },
     });
 
     return personalClinico;

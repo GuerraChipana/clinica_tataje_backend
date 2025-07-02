@@ -72,6 +72,16 @@ export class PacientesController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('misDatos')
+  misDatos(@Request() req: PacienteUserReq) {
+    const id = req.user.id_paciente;
+    try {
+      return this.pacientesService.misDatos(id);
+    } catch (error) {}
+  }
+  
+
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Actualizar celular y estado civil del paciente autenticado',
