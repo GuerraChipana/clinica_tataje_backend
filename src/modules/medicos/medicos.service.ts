@@ -86,7 +86,7 @@ export class MedicosService {
   ): Promise<any> {
     const medico = await this.medicoRepository.findOne({
       where: { id_medico },
-      relations: ['personalClinico', 'especialidad'],
+      relations: ['id_personal', 'id_especialidad'], // Corregido 'personalClinico' a 'id_personal'
     });
 
     if (!medico) {
@@ -105,15 +105,16 @@ export class MedicosService {
     return {
       id_medico: updatedMedico.id_medico,
       especialidad: {
-        id_especialidad: medico.id_especialidad.id_especialidad,
-        nombre: medico.id_especialidad.nombre,
+        id_especialidad: updatedMedico.id_especialidad.id_especialidad,
+        nombre: updatedMedico.id_especialidad.nombre,
       },
       personalClinico: {
-        id_personal: medico.id_personal.id_personal,
-        nombres: medico.id_personal.nombres,
-        apellido_paterno: medico.id_personal.apellido_paterno,
-        apellido_materno: medico.id_personal.apellido_materno,
-        email: medico.id_personal.email,
+        // Cambié 'personalClinico' a 'id_personal'
+        id_personal: updatedMedico.id_personal.id_personal,
+        nombres: updatedMedico.id_personal.nombres,
+        apellido_paterno: updatedMedico.id_personal.apellido_paterno,
+        apellido_materno: updatedMedico.id_personal.apellido_materno,
+        email: updatedMedico.id_personal.email,
       },
     };
   }
