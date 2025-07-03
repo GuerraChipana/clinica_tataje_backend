@@ -120,7 +120,7 @@ export class MedicosService {
 
   async findAll(): Promise<any[]> {
     const medicos = await this.medicoRepository.find({
-      relations: ['personalClinico', 'especialidad'],
+      relations: ['id_personal', 'id_especialidad'], // Asegúrate de usar 'id_personal' aquí
     });
 
     return medicos.map((medico) => ({
@@ -129,7 +129,8 @@ export class MedicosService {
         id_especialidad: medico.id_especialidad.id_especialidad,
         nombre: medico.id_especialidad.nombre,
       },
-      peronsal_clinico: {
+      personal_clinico: {
+        // Cambia 'personal_clinico' aquí también
         id_personal: medico.id_personal.id_personal,
         nombres: medico.id_personal.nombres,
         apellido_paterno: medico.id_personal.apellido_paterno,
@@ -142,7 +143,7 @@ export class MedicosService {
   async findOne(id_medico: number): Promise<any> {
     const medico = await this.medicoRepository.findOne({
       where: { id_medico },
-      relations: ['personalClinico', 'especialidad'],
+      relations: ['id_personal', 'id_especialidad'], // Cambié 'personalClinico' a 'id_personal'
     });
 
     if (!medico) throw new NotFoundException('El médico no existe');
@@ -154,6 +155,7 @@ export class MedicosService {
         nombre: medico.id_especialidad.nombre,
       },
       personalClinico: {
+        // Cambié 'personalClinico' a 'id_personal'
         id_personal: medico.id_personal.id_personal,
         nombres: medico.id_personal.nombres,
         apellido_paterno: medico.id_personal.apellido_paterno,
