@@ -151,6 +151,7 @@ export class PersonalClinicoService {
         'apellido_paterno',
         'apellido_materno',
         'fecha_nacimiento',
+        'direccion',
         'ubigeo',
         'email',
         'rol',

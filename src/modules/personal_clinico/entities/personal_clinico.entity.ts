@@ -49,6 +49,13 @@ export class PersonalClinico {
   @Column()
   ubigeo: string;
 
+  @ApiProperty({
+    example: 'Av. Siempre Viva 123',
+    description: 'Dirección del personal clínico',
+  })
+  @Column({ length: 100 })
+  direccion: string;
+
   @ApiProperty({ enum: ['Masculino', 'Femenino'] })
   @Column({ type: 'enum', enum: ['Masculino', 'Femenino'] })
   genero: 'Masculino' | 'Femenino';

@@ -40,8 +40,6 @@ export class PersonalClinicoController {
     private readonly personalClinicoService: PersonalClinicoService,
   ) {}
 
-
-  
   // Crear nuevo personal clínico
   @Roles(Rol.ADMINISTRADOR, Rol.SUPERADMINISTRADOR)
   @Post()

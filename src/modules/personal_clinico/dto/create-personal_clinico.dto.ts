@@ -11,7 +11,12 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Rol } from '../enums/roles.enum';
 
 export class CreatePersonalClinicoDto {
-  @ApiProperty({ example: '12345678', description: 'DNI del personal clínico', minLength: 8, maxLength: 8 })
+  @ApiProperty({
+    example: '12345678',
+    description: 'DNI del personal clínico',
+    minLength: 8,
+    maxLength: 8,
+  })
   @IsNotEmpty()
   @Length(8, 8)
   dni: string;
@@ -31,12 +36,21 @@ export class CreatePersonalClinicoDto {
   @IsString()
   apellido_materno: string;
 
-  @ApiProperty({ example: '1990-01-01', description: 'Fecha de nacimiento', type: String, format: 'date' })
+  @ApiProperty({
+    example: '1990-01-01',
+    description: 'Fecha de nacimiento',
+    type: String,
+    format: 'date',
+  })
   @IsNotEmpty()
   @IsDate()
   fecha_nacimiento: Date;
 
-  @ApiProperty({ example: 'Masculino', enum: ['Masculino', 'Femenino'], description: 'Género' })
+  @ApiProperty({
+    example: 'Masculino',
+    enum: ['Masculino', 'Femenino'],
+    description: 'Género',
+  })
   @IsNotEmpty()
   @IsEnum(['Masculino', 'Femenino'])
   genero: 'Masculino' | 'Femenino';
@@ -45,7 +59,13 @@ export class CreatePersonalClinicoDto {
   @IsOptional()
   ubigeo: string;
 
-  @ApiProperty({ example: 'correo@ejemplo.com', description: 'Correo electrónico' })
+  @IsOptional()
+  direccion: string;
+
+  @ApiProperty({
+    example: 'correo@ejemplo.com',
+    description: 'Correo electrónico',
+  })
   @IsNotEmpty()
   @IsEmail()
   email: string;
@@ -55,7 +75,11 @@ export class CreatePersonalClinicoDto {
   @IsString()
   password: string;
 
-  @ApiProperty({ example: Rol.MEDICO, enum: Rol, description: 'Rol del personal clínico' })
+  @ApiProperty({
+    example: Rol.MEDICO,
+    enum: Rol,
+    description: 'Rol del personal clínico',
+  })
   @IsEnum(Rol, { message: 'Rol no válido' })
   rol: Rol;
 }
