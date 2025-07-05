@@ -63,10 +63,11 @@ export class MedicosService {
     if (personal.rol !== Rol.MEDICO)
       throw new BadRequestException('El personal no tiene el rol de médico');
 
-    // Validar si ya está registrado como médico
-    const existeMedico = await this.medicoRepository.findOne({
-      where: { id_personal: { id_personal } }, // ← Buscar por id_personal
-    });
+    const existeMedico = await this.medicoRepository
+      .createQueryBuilder('medico')
+      .leftJoin('medico.id_personal', 'personal')
+      .where('personal.id_personal = :id', { id: id_personal })
+      .getOne();
 
     if (existeMedico)
       throw new BadRequestException(
