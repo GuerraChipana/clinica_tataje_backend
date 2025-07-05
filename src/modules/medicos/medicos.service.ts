@@ -24,21 +24,28 @@ export class MedicosService {
     @InjectRepository(Especialidades)
     private readonly especialidadesRepository: Repository<Especialidades>,
   ) {}
-
   private async validarPersonalClinico(id: number): Promise<PersonalClinico> {
     const personal = await this.personalClinicoRepository.findOne({
       where: { id_personal: id },
     });
+
     if (!personal) throw new NotFoundException('El personal clínico no existe');
+
     if (personal.rol !== Rol.MEDICO)
       throw new BadRequestException('El personal no tiene el rol de médico');
-    const existeMedico = await this.medicoRepository.findOne({
-      where: { id_medico: id },
-    });
+
+    // Validar si ya está registrado como médico
+    const existeMedico = await this.medicoRepository
+      .createQueryBuilder('medico')
+      .leftJoin('medico.id_personal', 'personal')
+      .where('personal.id_personal = :id', { id })
+      .getOne();
+
     if (existeMedico)
       throw new BadRequestException(
         'Este personal ya está registrado como médico',
       );
+
     return personal;
   }
 
@@ -53,31 +60,9 @@ export class MedicosService {
   async create(createMedicoDto: CreateMedicoDto): Promise<any> {
     const { id_personal, id_especialidad } = createMedicoDto;
 
-    // Validar existencia y rol del personal
-    const personal = await this.personalClinicoRepository.findOne({
-      where: { id_personal },
-    });
-
-    if (!personal) throw new NotFoundException('El personal clínico no existe');
-
-    if (personal.rol !== Rol.MEDICO)
-      throw new BadRequestException('El personal no tiene el rol de médico');
-
-    const existeMedico = await this.medicoRepository
-      .createQueryBuilder('medico')
-      .leftJoin('medico.id_personal', 'personal')
-      .where('personal.id_personal = :id', { id: id_personal })
-      .getOne();
-
-    if (existeMedico)
-      throw new BadRequestException(
-        'Este personal ya está registrado como médico',
-      );
-
-    // Validar especialidad
+    const personal = await this.validarPersonalClinico(id_personal);
     const especialidad = await this.validarEspecialidad(id_especialidad);
 
-    // Crear el registro del médico
     const medico = this.medicoRepository.create({
       id_personal: personal,
       id_especialidad: especialidad,
