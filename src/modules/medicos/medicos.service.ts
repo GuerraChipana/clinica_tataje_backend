@@ -53,9 +53,30 @@ export class MedicosService {
   async create(createMedicoDto: CreateMedicoDto): Promise<any> {
     const { id_personal, id_especialidad } = createMedicoDto;
 
-    const personal = await this.validarPersonalClinico(id_personal);
+    // Validar existencia y rol del personal
+    const personal = await this.personalClinicoRepository.findOne({
+      where: { id_personal },
+    });
+
+    if (!personal) throw new NotFoundException('El personal clínico no existe');
+
+    if (personal.rol !== Rol.MEDICO)
+      throw new BadRequestException('El personal no tiene el rol de médico');
+
+    // Validar si ya está registrado como médico
+    const existeMedico = await this.medicoRepository.findOne({
+      where: { id_personal: { id_personal } }, // ← Buscar por id_personal
+    });
+
+    if (existeMedico)
+      throw new BadRequestException(
+        'Este personal ya está registrado como médico',
+      );
+
+    // Validar especialidad
     const especialidad = await this.validarEspecialidad(id_especialidad);
 
+    // Crear el registro del médico
     const medico = this.medicoRepository.create({
       id_personal: personal,
       id_especialidad: especialidad,
@@ -63,10 +84,9 @@ export class MedicosService {
 
     const savedMedico = await this.medicoRepository.save(medico);
 
-    // Formatear respuesta manualmente
     return {
-      id_medico: savedMedico,
-      id_especialidad: {
+      id_medico: savedMedico.id_medico,
+      especialidad: {
         id_especialidad: especialidad.id_especialidad,
         nombre: especialidad.nombre,
       },

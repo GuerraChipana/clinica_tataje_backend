@@ -85,7 +85,7 @@ export class MedicosController {
     try {
       const medico = await this.medicosService.findOne(id);
       return { message: 'Médico encontrado', data: medico };
-    } catch (error) {
+    } catch (error) { 
       throw new InternalServerErrorException(error.message);
     }
   }
