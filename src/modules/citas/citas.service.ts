@@ -185,20 +185,20 @@ export class CitasService {
     return citas.map((cita) => this.mapToCitaResponse(cita));
   }
 
-  async buscarCitasDelPaciente(
-    dto: BuscarCitaPacienteDto,
-  ): Promise<CitaResponseDto[]> {
-    const citas = await this.citaRepo
-      .createQueryBuilder('cita')
-      .leftJoinAndSelect('cita.id_paciente', 'paciente')
-      .leftJoinAndSelect('cita.id_medico', 'medico')
-      .leftJoinAndSelect('medico.id_personal', 'personal')
-      .leftJoinAndSelect('medico.id_especialidad', 'especialidad')
-      .where('cita.id_paciente = :id', { id: dto.id_paciente })
-      .getMany();
+    async buscarCitasDelPaciente(
+      dto: BuscarCitaPacienteDto,
+    ): Promise<CitaResponseDto[]> {
+      const citas = await this.citaRepo
+        .createQueryBuilder('cita')
+        .leftJoinAndSelect('cita.id_paciente', 'paciente')
+        .leftJoinAndSelect('cita.id_medico', 'medico')
+        .leftJoinAndSelect('medico.id_personal', 'personal')
+        .leftJoinAndSelect('medico.id_especialidad', 'especialidad')
+        .where('cita.id_paciente = :id', { id: dto.id_paciente })
+        .getMany();
 
-    return citas.map((cita) => this.mapToCitaResponse(cita));
-  }
+      return citas.map((cita) => this.mapToCitaResponse(cita));
+    }
 
   async findAllPersonal(): Promise<CitaResponseDto[]> {
     const citas = await this.citaRepo

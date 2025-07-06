@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateConsultasMedicaDto } from './dto/create-consultas_medica.dto';
-import { UpdateConsultasMedicaDto } from './dto/update-consultas_medica.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConsultasMedica } from './entities/consultas_medica.entity';
 import { Repository } from 'typeorm';
@@ -102,8 +101,9 @@ export class ConsultasMedicasService {
     const nuevaConsulta = await this.consultaRepo.save(consulta);
 
     // Cambiar estado de cita a REALIZADA
-    cita.estado = EstadoCitaEnum.REALIZADA;
-    await this.citaRepo.save(cita);
+    await this.citaRepo.update(cita.id_cita, {
+      estado: EstadoCitaEnum.REALIZADA,
+    });
 
     // Buscar la consulta ya guardada con relaciones necesarias
     const consultaGuardada = await this.consultaRepo.findOne({
@@ -119,21 +119,5 @@ export class ConsultasMedicasService {
     });
 
     return this.mapToResponse(consultaGuardada);
-  }
-
-  findAll(): Promise<ConsultaMedicaResponseDto> {
-    return;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} consultasMedica`;
-  }
-
-  update(id: number, updateConsultasMedicaDto: UpdateConsultasMedicaDto) {
-    return `This action updates a #${id} consultasMedica`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} consultasMedica`;
   }
 }
