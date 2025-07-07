@@ -143,6 +143,7 @@ export class MedicosService {
         apellido_paterno: medico.id_personal.apellido_paterno,
         apellido_materno: medico.id_personal.apellido_materno,
         email: medico.id_personal.email,
+        genero: medico.id_personal.genero
       },
     }));
   }

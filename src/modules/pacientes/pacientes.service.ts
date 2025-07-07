@@ -85,6 +85,7 @@ export class PacientesService {
         direccion: true,
         telefono: true,
         genero: true,
+        estado_civil:true,
       },
     });
     if (!paciente) {
