@@ -21,12 +21,14 @@ async function bootstrap() {
     .setTitle('API Clínica')
     .setDescription('Documentación de la API del sistema clínico')
     .setVersion('1.0')
-    .addBearerAuth() // Si usas JWT
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('documentacion', app, document); // Disponible en /api
+  SwaggerModule.setup('documentacion', app, document);
 
-  await app.listen(process.env.PORT);
+  const port = process.env.PORT || 3000;
+  await app.listen(port, '0.0.0.0');
+  console.log(`🚀 Application is running on: http://0.0.0.0:${port}`);
 }
 bootstrap();
