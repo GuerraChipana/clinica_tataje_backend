@@ -25,14 +25,12 @@ export class HistoriaMedicaService {
   }
 
   async obtenerHistorialDePaciente(id_paciente: number) {
-    const historia = await this.historiaRepo.findOne({
-      where: { id_paciente: id_paciente },
+    let historia = await this.historiaRepo.findOne({
+      where: { id_paciente },
     });
 
     if (!historia) {
-      throw new NotFoundException(
-        'El paciente no tiene historia médica registrada',
-      );
+      historia = await this.crearHistoriaSiNoExiste(id_paciente);
     }
 
     const consultas = await this.consultaRepo.find({
@@ -49,7 +47,6 @@ export class HistoriaMedicaService {
       },
     });
 
-    // Opcional: simplificas la respuesta si quieres limitar los campos
     const resultado = consultas.map((c) => ({
       id_consulta: c.id_consulta,
       fecha_consulta: c.fecha_consulta,
@@ -74,14 +71,13 @@ export class HistoriaMedicaService {
   }
 
   async obtenerHistorialpacienteID(dto: BuscarCitaPacienteDto) {
-    const historia = await this.historiaRepo.findOne({
+    let historia = await this.historiaRepo.findOne({
       where: { id_paciente: dto.id_paciente },
     });
 
+    // Si no existe, la crea
     if (!historia) {
-      throw new NotFoundException(
-        'El paciente no tiene historia médica registrada',
-      );
+      historia = await this.crearHistoriaSiNoExiste(dto.id_paciente);
     }
 
     const consultas = await this.consultaRepo.find({
@@ -98,7 +94,6 @@ export class HistoriaMedicaService {
       },
     });
 
-    // Opcional: simplificas la respuesta si quieres limitar los campos
     const resultado = consultas.map((c) => ({
       id_consulta: c.id_consulta,
       fecha_consulta: c.fecha_consulta,
