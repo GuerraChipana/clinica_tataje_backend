@@ -96,6 +96,7 @@ export class ConsultasMedicasService {
       diagnostico: dto.diagnostico,
       tratamiento: dto.tratamiento,
       observaciones: dto.observaciones,
+      fecha_consulta: new Date()
     });
 
     const nuevaConsulta = await this.consultaRepo.save(consulta);
