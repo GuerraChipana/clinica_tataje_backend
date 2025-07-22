@@ -31,6 +31,43 @@ export class PacientesService {
     });
     return await this.pacienteRepo.save(newPaciente);
   }
+  async cambiarContrasena(
+    id_paciente: number,
+    passwordActual: string,
+    nuevaContrasena: string,
+  ): Promise<{ message: string }> {
+    const paciente = await this.pacienteRepo.findOne({
+      where: { id_paciente },
+      select: { id_paciente: true, password: true },
+    });
+
+    if (!paciente) {
+      throw new BadRequestException('El paciente no existe');
+    }
+
+    const passwordValido = await bcrypt.compare(
+      passwordActual,
+      paciente.password,
+    );
+    if (!passwordValido) {
+      throw new BadRequestException('La contraseña actual es incorrecta');
+    }
+
+    const nuevaPasswordHash = await bcrypt.hash(nuevaContrasena, 10);
+
+    // Actualizamos usando preload + save para mantener validaciones y hooks si los hubiera
+    const pacienteActualizado = await this.pacienteRepo.preload({
+      id_paciente,
+      password: nuevaPasswordHash,
+    });
+
+    if (!pacienteActualizado) {
+      throw new BadRequestException('Error al actualizar la contraseña');
+    }
+
+    await this.pacienteRepo.save(pacienteActualizado);
+    return { message: 'Contraseña actualizada exitosamente' };
+  }
 
   async findAll(): Promise<Paciente[]> {
     return this.pacienteRepo.find({
@@ -71,7 +108,7 @@ export class PacientesService {
     return paciente;
   }
 
-   async misDatos(id_paciente: number): Promise<Paciente> {
+  async misDatos(id_paciente: number): Promise<Paciente> {
     const paciente = await this.pacienteRepo.findOne({
       where: { id_paciente },
       select: {
@@ -85,7 +122,7 @@ export class PacientesService {
         direccion: true,
         telefono: true,
         genero: true,
-        estado_civil:true,
+        estado_civil: true,
       },
     });
     if (!paciente) {

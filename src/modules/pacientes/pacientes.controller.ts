@@ -80,7 +80,6 @@ export class PacientesController {
       return this.pacientesService.misDatos(id);
     } catch (error) {}
   }
-  
 
   @ApiBearerAuth()
   @ApiOperation({
@@ -97,6 +96,25 @@ export class PacientesController {
     const id = req.user.id_paciente;
     try {
       return this.pacientesService.cambioCelladnECivil(id, updatePacienteDto);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  @Patch('cambio')
+  @UseGuards(AuthGuard('jwt'))
+  cambioPassword(
+    @Request() req: PacienteUserReq,
+    @Body() body: { passwordActual: string; nuevaContrasena: string },
+  ) {
+    const id = req.user.id_paciente;
+    const { passwordActual, nuevaContrasena } = body;
+    try {
+      return this.pacientesService.cambiarContrasena(
+        id,
+        passwordActual,
+        nuevaContrasena,
+      );
     } catch (error) {
       throw new Error(error.message);
     }
