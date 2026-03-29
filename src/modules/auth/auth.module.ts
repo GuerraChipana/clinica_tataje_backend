@@ -14,7 +14,7 @@ dotenv.config();
     TypeOrmModule.forFeature([PersonalClinico, Paciente]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
+      signOptions: { expiresIn: (process.env.JWT_EXPIRES_IN || '1h') as any },
     }),
   ],
   controllers: [AuthController],

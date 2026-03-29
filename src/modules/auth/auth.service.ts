@@ -7,7 +7,7 @@ import { PersonalClinico } from '../personal_clinico/entities/personal_clinico.e
 import { Paciente } from '../pacientes/entities/paciente.entity';
 import { LoginPacienteDto } from './dto/login-paciente.dto';
 import { LoginPersonalClinicoDto } from './dto/login-personal-clinico.dto';
-import * as ms from 'ms';
+import ms = require('ms'); // ✅ Forma compatible con NestJS
 
 @Injectable()
 export class AuthService {
@@ -21,13 +21,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  // Corregimos el DTO y la desestructuración del login
   async loginPersonal(dtoLogin: LoginPersonalClinicoDto) {
     const { email, password } = dtoLogin;
 
-    // Buscar el usuario por el correo
     const user = await this.personalRepo.findOne({ where: { email } });
-
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
@@ -38,21 +35,21 @@ export class AuthService {
       rol: user.rol,
     };
 
-    // Obtenemos la expiración desde el entorno o se asigna un valor predeterminado
-    const expiresIn = process.env.JWT_EXPIRES_IN; // Usamos un valor por defecto '1h' si no está definido en .env
+    // 🔹 Obtenemos expiración y casteamos a StringValue de ms
+    const expiresIn = (process.env.JWT_EXPIRES_IN || '1h') as ms.StringValue;
+
     const token = this.jwtService.sign(payload, { expiresIn });
+
     return {
       access_token: token,
-      token_expiration: new Date(Date.now() + ms(expiresIn)).toISOString(), // Si deseas mostrar la expiración exacta
+      token_expiration: new Date(Date.now() + ms(expiresIn)).toISOString(),
     };
   }
 
-  // Para el login de pacientes, seguimos la misma estructura
   async loginPaciente(dtoLogin: LoginPacienteDto) {
     const { dni, password } = dtoLogin;
 
     const user = await this.pacienteRepo.findOne({ where: { dni } });
-
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
@@ -64,7 +61,8 @@ export class AuthService {
       rol: 'paciente',
     };
 
-    const expiresIn = process.env.JWT_EXPIRES_IN; // Usamos un valor predeterminado
+    const expiresIn = (process.env.JWT_EXPIRES_IN || '1h') as ms.StringValue;
+
     const token = this.jwtService.sign(payload, { expiresIn });
 
     return {
